@@ -10,9 +10,14 @@
 <body class="bg-light">
   <header class="bg-dark text-white py-3">
     <div class="container">
-      <h1 class="h4 mb-1">XSS Injection Demo</h1>
-      <p class="mb-0">Tab 1 intentionally reflects untrusted input via <code>innerHTML</code>. Tab 2 shows a safe pattern.</p>
-    </div>
+  <h1 class="h4 mb-1">Web Security Labs</h1>
+  <p class="mb-0">
+    Tab 1: XSS via <code>innerHTML</code> (vulnerable). 
+    Tab 2: runtime <code>eval</code>/<code>new Function</code> (vulnerable). 
+    Tab 3: mitigations (safe).
+  </p>
+</div>
+
   </header>
 
   <main class="container py-4">
