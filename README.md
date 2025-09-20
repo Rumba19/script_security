@@ -11,16 +11,6 @@ Purpose: demonstrate two client-side vulnerabilities and show safe fixes.
 └─ app-fix.js      # Step 3: safe patterns + DOMPurify option
 ```
 
-## Run
-**Open directly:** double-click `index.html`  
-**Or serve locally:**
-```bash
-# Python
-python -m http.server 8080
-# Node
-npx http-server -p 8080
-```
-Visit `http://localhost:8080`.
 
 ## Step 1 — XSS (vulnerable)
 UI tab: **1) XSS Injection (vulnerable)**
