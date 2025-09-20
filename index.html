@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>XSS Test (Vulnerable)</title>
+  <title>XSS Demo + Mitigation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,38 +11,64 @@
   <header class="bg-dark text-white py-3">
     <div class="container">
       <h1 class="h4 mb-1">XSS Injection Demo</h1>
-      <p class="mb-0">This tab reflects untrusted input into the DOM using <code>innerHTML</code>.</p>
+      <p class="mb-0">Tab 1 intentionally reflects untrusted input via <code>innerHTML</code>. Tab 2 shows a safe pattern.</p>
     </div>
   </header>
 
   <main class="container py-4">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <button class="nav-link active" type="button">1) XSS Injection (vulnerable)</button>
+    <ul class="nav nav-tabs" id="tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="xss-tab" data-bs-toggle="tab" data-bs-target="#xss" type="button" role="tab">
+          1) XSS Injection (vulnerable)
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="mitigations-tab" data-bs-toggle="tab" data-bs-target="#mitigations" type="button" role="tab">
+          2) Mitigation (safe)
+        </button>
       </li>
     </ul>
 
-    <div class="border border-top-0 bg-white p-3 rounded-bottom">
-      <form class="row g-2" id="form-xss">
-        <div class="col-12 col-md-9">
-          <input id="xssInput" class="form-control"
-                 placeholder='Try: <img src=x onerror=alert(1)>'>
+    <div class="tab-content border border-top-0 bg-white p-3 rounded-bottom" id="tabContent">
+      <!-- Tab 1: Vulnerable -->
+      <div class="tab-pane fade show active" id="xss" role="tabpanel" aria-labelledby="xss-tab">
+        <form class="row g-2" id="form-xss">
+          <div class="col-12 col-md-9">
+            <input id="xssInput" class="form-control" placeholder='Try: <img src=x onerror=alert(1)>'>
+          </div>
+          <div class="col-12 col-md-3 d-grid">
+            <button class="btn btn-danger" type="submit">Render (innerHTML)</button>
+          </div>
+        </form>
+        <div class="mt-3">
+          <div class="form-text">Also via query: <code>?q=&lt;img src=x onerror=alert(1)&gt;</code></div>
+          <div id="xssOut" class="border rounded p-3 mt-2"></div>
         </div>
-        <div class="col-12 col-md-3 d-grid">
-          <button class="btn btn-danger" type="submit">Render (innerHTML)</button>
-        </div>
-      </form>
+      </div>
 
-      <div class="mt-3">
-        <div class="form-text">
-          Also works via query string: <code>?q=&lt;img src=x onerror=alert(1)&gt;</code>
+      <!-- Tab 2: Mitigation -->
+      <div class="tab-pane fade" id="mitigations" role="tabpanel" aria-labelledby="mitigations-tab">
+        <p class="mb-2">Safe echo using <code>textContent</code>. No HTML is interpreted.</p>
+        <form class="row g-2" id="form-safe">
+          <div class="col-12 col-md-9">
+            <input id="safeInput" class="form-control" placeholder='Tags will be shown literally'>
+          </div>
+          <div class="col-12 col-md-3 d-grid">
+            <button class="btn btn-primary" type="submit">Render (textContent)</button>
+          </div>
+        </form>
+        <div id="safeOut" class="border rounded p-3 mt-2"></div>
+
+        <div class="mt-3 small text-muted">
+          Optional sanitizer (if limited HTML is required): use DOMPurify and then
+          <code>safeOut.innerHTML = DOMPurify.sanitize(value, {ALLOWED_TAGS:["b","i","u"]})</code>.
         </div>
-        <div id="xssOut" class="border rounded p-3 mt-2"></div>
       </div>
     </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="app-xss.js" defer></script>
+  <script src="app-fix.js" defer></script>
 </body>
 </html>
