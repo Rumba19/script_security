@@ -48,7 +48,7 @@ UI tab: **3) Mitigation (safe)**
 out.textContent = "Echo (encoded): " + v; // safe
 ```
 
-**Optional sanitized subset (DOMPurify)**
+**Sanitized subset (DOMPurify)**
 ```js
 const clean = DOMPurify.sanitize(v, {
   ALLOWED_TAGS: ["b","i","u","strong","em","br","a"],
