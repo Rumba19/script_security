@@ -19,7 +19,10 @@ npx http-server -p 8080
 ##  output will be something like below screenshot:
 ![output1](output1.png)
 
-
+## Description on how to run dynamic evaluation
 ![eval](tab2.png)
-
+## Output will be as follows
+![output](output1.png)
+![output](output2a.png)
+![output](output2b.png)
 ![safe](tab3.png)
