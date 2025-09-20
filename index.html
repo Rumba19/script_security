@@ -44,6 +44,26 @@
       <!-- Tab 1: Vulnerable -->
       <div class="tab-pane fade show active" id="xss" role="tabpanel" aria-labelledby="xss-tab">
         <form class="row g-2" id="form-xss">
+     <div class="mt-3">
+        <p class="mb-2">
+            <strong>About this demo:</strong> The input below is inserted into the page using
+            <code>innerHTML</code> without validation or encoding. Any HTML provided by the user
+            is interpreted by the browser, so scripts or event handlers will execute. This is a classic
+            reflected XSS pattern.
+        </p>
+        <hr>
+         <ul class="mb-2">
+            <li><strong>Vulnerable sink:</strong> <code>element.innerHTML = userInput;</code></li>
+            <li><strong>Risk:</strong> attackers can run arbitrary JS in the origin, steal cookies, or deface the UI.</li>
+            <li><strong>How to test (form):</strong> paste <code>&lt;img src=x onerror=alert(1)&gt;</code> and submit.</li>
+            <li><strong>How to test (URL):</strong> append
+            <code>?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E</code> to the page URL.</li>
+            <li><strong>Safer alternative:</strong> render untrusted data with <code>textContent</code> or sanitize with DOMPurify.</li>
+        </ul>
+    </div>
+        <div class="alert alert-warning mb-0" role="alert">
+            This tab is intentionally insecure for demonstration. Do not deploy this pattern.
+        </div>
           <div class="col-12 col-md-9">
             <input id="xssInput" class="form-control" placeholder='Try: <img src=x onerror=alert(1)>'>
           </div>
@@ -59,8 +79,31 @@
       </div>
         <!-- Tab 2: Eval -->
         <div class="tab-pane fade" id="eval" role="tabpanel" aria-labelledby="eval-tab">
-        <p class="mb-2">Evaluates user input using <code>eval</code> and <code>new Function</code>. Deliberately unsafe.</p>
+        <div class="mt-3">
+            <p class="mb-2">
+                <strong>About this demo:</strong> These controls execute user-supplied strings as JavaScript using
+                <code>eval()</code> and <code>new Function()</code>. This enables remote code execution in the page context.
+                Any code the user enters runs with the page’s privileges.
+            </p>
+            <hr>
+        <ul class="mb-2">
+            <li><strong>Vulnerable sinks:</strong>
+            <code>const r = eval(expr);</code> and <code>const fn = new Function(body); fn();</code>
+            </li>
+            <li><strong>Risks:</strong> data theft, CSRF via scripted actions, DOM defacement, supply-chain pivots.</li>
+            <li><strong>How to test (eval):</strong> enter <code>alert("pwned")</code> or <code>2+2</code> then run.</li>
+            <li><strong>How to test (Function):</strong> enter <code>return 7*6</code> or <code>alert("pwned")</code> then run.</li>
+            <li><strong>Why unsafe:</strong> parses and executes arbitrary code at runtime; CSP often cannot fully mitigate.</li>
+            <li><strong>Safer alternatives:</strong> parse data (e.g., <code>JSON.parse</code>), whitelist operations in code,
+            use explicit APIs, avoid string-based timers/handlers (<code>setTimeout("...")</code>), and never accept code as input.
+            </li>
+        </ul>
 
+        <div class="alert alert-warning mb-0" role="alert">
+            This tab is intentionally insecure. Do not use <code>eval</code> or <code>new Function</code> with untrusted input.
+        </div>
+        </div>
+    <hr>
         <form class="row g-2" id="form-eval">
             <div class="col-12 col-md-9">
             <input id="evalExpr" class="form-control" placeholder='Try: 2+2 or alert("pwned")'>
@@ -85,9 +128,38 @@
 
       <!-- Tab 3: Mitigation -->
       <div class="tab-pane fade" id="mitigations" role="tabpanel" aria-labelledby="mitigations-tab">
-         <p class="mb-2">
-            Safe echo using <code>textContent</code> by default. Optionally allow a tiny HTML subset via DOMPurify.
+        <div class="mt-3">
+        <p class="mb-2">
+            <strong>About these mitigations:</strong> Untrusted input is rendered as text with
+            <code>textContent</code>. When minimal HTML is required, input is sanitized via DOMPurify
+            using a strict allowlist. No dynamic code execution is performed.
         </p>
+        <hr>
+        <ul class="mb-2">
+            <li><strong>Primary defense:</strong> <code>element.textContent = userInput;</code> encodes characters so the browser does not interpret them as HTML.</li>
+            <li><strong>When HTML is needed:</strong> sanitize first:
+            <code>DOMPurify.sanitize(userInput, { ALLOWED_TAGS:[ "b","i","u","strong","em","br","a" ], ALLOWED_ATTR:[ "href","title" ] })</code>.
+            </li>
+            <li><strong>Link hardening:</strong> set <code>target="_blank"</code> + <code>rel="noopener noreferrer"</code> on sanitized anchors.</li>
+            <li><strong>Avoid dynamic eval:</strong> never use <code>eval</code>, <code>new Function</code>, or string-based timers/handlers.</li>
+            <li><strong>Extra hardening (server):</strong> apply a Content Security Policy (CSP) that disallows inline scripts and <em>eval</em>.</li>
+            <li><strong>Developer guardrails:</strong> enable ESLint rules <code>no-eval</code>, <code>no-implied-eval</code>, <code>no-new-func</code>.</li>
+        </ul>
+
+        <details class="mb-2">
+            <summary><strong>How to test</strong></summary>
+            <ol class="mb-0">
+            <li>Leave “Allow basic HTML” <em>off</em>, submit <code>&lt;img src=x onerror=alert(1)&gt;</code>. It should display as plain text.</li>
+            <li>Turn “Allow basic HTML” <em>on</em>, submit <code>&lt;b&gt;bold&lt;/b&gt; &lt;script&gt;alert(1)&lt;/script&gt;</code>. Bold text should render; the script must be removed.</li>
+            <li>Submit a link: <code>&lt;a href="https://example.com"&gt;go&lt;/a&gt;</code>. It should open in a new tab without opener access.</li>
+            </ol>
+        </details>
+<hr>
+  <div class="alert alert-info mb-0" role="alert">
+    This tab demonstrates safe-by-default rendering. Any executable markup must be stripped or encoded before insertion.
+  </div>
+</div>
+<hr>
 
         <form class="row g-2 align-items-center" id="form-safe">
             <div class="col-12 col-md-9">
