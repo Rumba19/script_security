@@ -16,6 +16,9 @@ npx http-server -p 8080
 ```
 ![xss-injection](tab1.png)
 
+##  output will be something like below screenshot:
+![output1](output1.png)
+
 
 ![eval](tab2.png)
 
