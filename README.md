@@ -22,7 +22,14 @@ npx http-server -p 8080
 ## Description on how to run dynamic evaluation
 ![eval](tab2.png)
 ## Output will be as follows
-![output](output1.png)
-![output](output2a.png)
-![output](output2b.png)
+![output2](output1.png)
+![output2](output2a.png)
+![output2](output2b.png)
+
+## Mitigation for tab1 and tab2 vulnerabilities
 ![safe](tab3.png)
+
+## Output:
+![output3](output3.png)
+
+![output3](output3a.png)
