@@ -61,30 +61,9 @@ out.innerHTML = clean;
 - Do not use `innerHTML` with untrusted data.
 - If HTML is required, sanitize with a strict allowlist.
 - Avoid `eval`, `new Function`, and string-based handlers/timers.
-
-## Notes
-- `index.html` loads Bootstrap, `app-xss.js`, `app-eval.js`, DOMPurify (CDN), and `app-fix.js`.
-- Alerts in each tab describe what happened and why it’s (un)safe.
-
-## Optional hardening
-**CSP (server header)**
-```
-Content-Security-Policy:
-  default-src 'self';
-  script-src 'self' https://cdn.jsdelivr.net/npm/dompurify/;
-  script-src-attr 'none';
-```
-
-**ESLint**
-```json
-{
-  "rules": {
-    "no-eval": "error",
-    "no-implied-eval": "error",
-    "no-new-func": "error"
-  }
-}
-```
+ 
+ 
+ 
 
 ## Warning
 This lab is intentionally insecure in vulnerable tabs. Use only in a controlled environment.
